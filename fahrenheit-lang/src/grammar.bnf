@@ -1,0 +1,24 @@
+style = macro* citation
+
+citation = <'citation'> line*
+
+macro = <'macro'> #'[a-z]+' line*
+
+line  = r-var*
+      | r-macro*
+      | r-string
+
+(* allowed var names *)
+r-var =
+    ( '$title'
+    | '$author'
+    )
+
+    modifier*
+
+r-macro = #'@[a-z]+'
+r-string = #'".+?"'
+
+modifier =
+    (':prefix' r-string)
+  | (':suffix' r-string)
