@@ -1,24 +1,19 @@
-style = macro* citation
+style = definition* citation definition*
 
-citation = <'citation'> line*
+<definition> = macro
 
-macro = <'macro'> #'[a-z]+' line*
+(*  example of macro definition
 
-line  = r-var*
-      | r-macro*
-      | r-string
+    macro hw
+        "Hello World!"
+    end
 
-(* allowed var names *)
-r-var =
-    ( '$title'
-    | '$author'
-    )
+    *)
 
-    modifier*
+macro = <'macro'> #'[a-z0-9]+' statement+ end
 
-r-macro = #'@[a-z]+'
-r-string = #'".+?"'
+citation = <'citation'> statement+ end
 
-modifier =
-    (':prefix' r-string)
-  | (':suffix' r-string)
+statement = #'".*?"'
+
+<end> = <'end'>
