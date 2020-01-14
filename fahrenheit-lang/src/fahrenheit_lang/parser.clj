@@ -3,7 +3,7 @@
 
 (def parser
   (insta/parser
-    (clojure.java.io/resource "grammar.bnf")
+    (clojure.java.io/resource "fahrenheit-grammar.ebnf")
     :auto-whitespace :standard))
 
 (defn parse [source]
