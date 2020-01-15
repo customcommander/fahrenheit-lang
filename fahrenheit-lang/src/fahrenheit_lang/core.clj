@@ -3,7 +3,8 @@
   (:require
    [clojure.pprint :as pp]
    [clojure.tools.cli :refer [parse-opts]]
-   [fahrenheit-lang.parser :refer [parse]]))
+   [fahrenheit-lang.parser :refer [parse]]
+   [fahrenheit-lang.compiler.csl :as c-csl]))
 
 (def cli-options
   [["-f" "--file FILE" "*.fahr file"]])
@@ -14,4 +15,5 @@
     (->> (:file opts)
          (slurp)
          (parse)
+         (c-csl/transform)
          (pp/pprint))))
