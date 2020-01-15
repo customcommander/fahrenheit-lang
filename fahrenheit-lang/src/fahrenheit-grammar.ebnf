@@ -1,19 +1,19 @@
-style = definition* citation definition*
+input = style citation macro*
 
-<definition> = macro
+<start> = <'{'>
+<stop> = <'}'>
 
-(*  example of macro definition
+style = <'style'> start style-statement+ stop
 
-    macro hw
-        "Hello World!"
-    end
+style-statement =
+    ('title' str)
+|   ('author' str str?)
 
-    *)
+citation = <'citation'> start statement+ stop
 
-macro = <'macro'> #'[a-z0-9]+' statement+ end
-
-citation = <'citation'> statement+ end
+macro = <'macro'> #'[a-z0-9]+' start statement+ stop
 
 statement = #'".*?"'
+<str> = #'".*?"'
 
 <end> = <'end'>
