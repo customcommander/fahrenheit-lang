@@ -1,4 +1,4 @@
-fahrenheit-lang/target
+target/
 .lein-repl-history
 test.fahr
 .nrepl-port
