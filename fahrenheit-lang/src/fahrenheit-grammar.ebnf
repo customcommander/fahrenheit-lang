@@ -1,19 +1,23 @@
-input = style citation macro*
+style = info macro* citation
 
-<start> = <'{'>
-<stop> = <'}'>
+info =
+    <'info'> <'{'>
+        info-statement+
+    <'}'>
 
-style = <'style'> start style-statement+ stop
-
-style-statement =
+info-statement =
     ('title' str)
 |   ('author' str str?)
 
-citation = <'citation'> start statement+ stop
+citation =
+    <'citation'> <'{'>
+        statement+
+    <'}'>
 
-macro = <'macro'> #'[a-z0-9]+' start statement+ stop
+macro =
+    <'macro'> #'[a-z0-9]+' <'{'>
+        statement+
+    <'}'>
 
 statement = #'".*?"'
 <str> = #'".*?"'
-
-<end> = <'end'>
