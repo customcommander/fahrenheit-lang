@@ -7,4 +7,6 @@
     :auto-whitespace :standard))
 
 (defn parse [source]
-  (parser source))
+  (->>  (parser source)
+        (insta/transform
+          {:str str})))

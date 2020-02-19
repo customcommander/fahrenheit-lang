@@ -1,23 +1,16 @@
-style = info macro* citation
+program = style
 
-info =
-    <'info'> <'{'>
-        info-statement+
+style =
+    <'style'> str <'{'>
+        style-statement+
     <'}'>
 
-info-statement =
-    ('title' str)
-|   ('author' str str?)
+<style-statement> =
+    id
+|   url
 
-citation =
-    <'citation'> <'{'>
-        statement+
-    <'}'>
+id = <'id'> str
+url = <'url'> str
 
-macro =
-    <'macro'> #'[a-z0-9]+' <'{'>
-        statement+
-    <'}'>
-
-statement = #'".*?"'
-<str> = #'".*?"'
+str = <'"'> chr* <'"'>
+<chr> = #'[^"]'

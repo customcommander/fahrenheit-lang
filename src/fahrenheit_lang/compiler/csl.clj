@@ -1,31 +1,21 @@
 (ns fahrenheit-lang.compiler.csl
-  (:require
-    [clojure.zip :as zip]
-    [clojure.data.xml :as xml]))
+  (:require [clojure.data.xml :as xml]))
 
-(defmulti info-statement->csl #(-> % second keyword))
+(defmulti ast->xml-info first :default :std-info)
 
-(defmethod info-statement->csl :title
-  [[_ _ text]]
-  [:title text])
+(defmethod ast->xml-info :std-info [[k v]]
+  [k {} v])
 
-(defmethod info-statement->csl :author
-  [[_ _ name email]]
-  [:author
-    [:name name]
-    [:email email]])
+(defmethod ast->xml-info :url [[k v]]
+  [:link {:href v :rel "self"}])
 
-(defn info->csl [ast]
-  (let [loc (zip/vector-zip ast)]
-    (-> loc
-        (zip/down)
-        (zip/right)
-        (zip/edit
-          (fn [[head & tail]]
-            (into [head]
-              (map info-statement->csl tail))))
-        (zip/root))))
+(defmulti ast->xml first)
 
-(defn transform [ast]
-  (-> ast
-      info->csl))
+(defmethod ast->xml :program [[_ & ast]]
+  (->>  [:style {} (ast->xml (first ast))]
+        xml/sexp-as-element
+        xml/indent-str))
+
+(defmethod ast->xml :style [[_ title & ast]]
+  (let [info (map ast->xml-info (cons [:title title] ast))]
+    `[:info {} ~@info]))
