@@ -9,6 +9,12 @@
 (defmethod ast->xml-info :url [[k v]]
   [:link {:href v :rel "self"}])
 
+(defmethod ast->xml-info :template [[k v]]
+  [:link {:href v :rel "template"}])
+
+(defmethod ast->xml-info :documentation [[k v]]
+  [:link {:href v :rel "documentation"}])
+
 (defmulti ast->xml first)
 
 (defmethod ast->xml :program [[_ & ast]]

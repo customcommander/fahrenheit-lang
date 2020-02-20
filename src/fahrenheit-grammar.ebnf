@@ -8,9 +8,13 @@ style =
 <style-statement> =
     id
 |   url
+|   template
+|   documentation
 
 id = <'id'> str
 url = <'url'> str
+template = <'template'> str
+documentation = <'documentation'> str
 
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
