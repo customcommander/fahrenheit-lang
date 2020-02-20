@@ -1,9 +1,9 @@
 (ns fahrenheit-lang.compiler.csl
   (:require [clojure.data.xml :as xml]))
 
-(defmulti ast->xml-info first :default :std-info)
+(defmulti ast->xml-info first)
 
-(defmethod ast->xml-info :std-info [[k v]]
+(defmethod ast->xml-info :default [[k v]]
   [k {} v])
 
 (defmethod ast->xml-info :url [[k v]]
