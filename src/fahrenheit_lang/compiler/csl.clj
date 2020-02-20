@@ -15,6 +15,19 @@
 (defmethod ast->xml-info :documentation [[k v]]
   [:link {:href v :rel "documentation"}])
 
+(defmethod ast->xml-info :author [[_ name]]
+  [:author {}
+    [:name {} name]])
+
+(defmethod ast->xml-info :author-extended [[_ name & rest]]
+  (let [author (into {} (cons [:name name] rest))]
+    [:author {}
+      [:name {} (:name author)]
+      (when (:email author)
+        [:email {} (:email author)])
+      (when (:website author)
+        [:uri {} (:website author)])]))
+
 (defmulti ast->xml first)
 
 (defmethod ast->xml :program [[_ & ast]]

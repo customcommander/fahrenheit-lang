@@ -10,11 +10,25 @@ style =
 |   url
 |   template
 |   documentation
+|   author
+|   author-extended
 
 id = <'id'> str
 url = <'url'> str
 template = <'template'> str
 documentation = <'documentation'> str
+email = <'email'> str
+website = <'website'> str
+author = <'author'> str
+
+<author-statement> =
+    email
+|   website
+
+author-extended =
+    <'author'> str <'{'>
+        author-statement+
+    <'}'>
 
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
