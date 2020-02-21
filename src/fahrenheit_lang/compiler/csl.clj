@@ -35,6 +35,6 @@
         xml/sexp-as-element
         xml/indent-str))
 
-(defmethod ast->xml :style [[_ title & ast]]
+(defmethod ast->xml :about [[_ title & ast]]
   (let [info (map ast->xml-info (cons [:title title] ast))]
     `[:info {} ~@info]))

@@ -1,11 +1,11 @@
-program = style
+program = about
 
-style =
-    <'style'> str <'{'>
-        style-statement+
+about =
+    <'about'> str <'{'>
+        about-statement+
     <'}'>
 
-<style-statement> =
+<about-statement> =
     id
 |   url
 |   template
