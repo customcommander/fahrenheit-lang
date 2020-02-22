@@ -15,6 +15,7 @@ about =
 |   issn
 |   eissn
 |   issnl
+|   citation-format
 
 id = <'id'> str
 url = <'url'> str
@@ -26,6 +27,7 @@ author = <'author'> str
 issn = <'issn'> str
 eissn = <'eissn'> str
 issnl = <'issnl'> str
+citation-format = <'citation-format'> str
 
 <author-statement> =
     email

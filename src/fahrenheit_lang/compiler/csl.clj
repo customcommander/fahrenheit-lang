@@ -47,6 +47,12 @@
 (defmethod ast->xml :website [loc]
   (zip/replace loc :uri))
 
+(defmethod ast->xml :citation-format [loc]
+  (as-> loc l
+        (zip/replace l :category)
+        (zip/next l)
+        (zip/edit l #(assoc {} :citation-format %))))
+
 (defn ast->csl [ast]
   (loop [loc (zip/vector-zip ast)]
     (if (zip/end? loc)
