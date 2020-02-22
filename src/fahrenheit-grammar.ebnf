@@ -12,6 +12,9 @@ about =
 |   documentation
 |   author
 |   author-extended
+|   issn
+|   eissn
+|   issnl
 
 id = <'id'> str
 url = <'url'> str
@@ -20,6 +23,9 @@ documentation = <'documentation'> str
 email = <'email'> str
 website = <'website'> str
 author = <'author'> str
+issn = <'issn'> str
+eissn = <'eissn'> str
+issnl = <'issnl'> str
 
 <author-statement> =
     email
