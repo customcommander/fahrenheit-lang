@@ -18,6 +18,7 @@ about =
 |   citation-format
 |   field
 |   summary
+|   updated
 
 id = <'id'> str
 url = <'url'> str
@@ -32,6 +33,7 @@ issnl = <'issnl'> str
 citation-format = <'citation-format'> str
 field = <'field'> str
 summary = <'summary'> str
+updated = <'updated'> str
 
 <author-statement> =
     email
