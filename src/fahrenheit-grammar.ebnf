@@ -16,6 +16,7 @@ about =
 |   eissn
 |   issnl
 |   citation-format
+|   field
 
 id = <'id'> str
 url = <'url'> str
@@ -28,6 +29,7 @@ issn = <'issn'> str
 eissn = <'eissn'> str
 issnl = <'issnl'> str
 citation-format = <'citation-format'> str
+field = <'field'> str
 
 <author-statement> =
     email

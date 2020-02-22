@@ -53,6 +53,12 @@
         (zip/next l)
         (zip/edit l #(assoc {} :citation-format %))))
 
+(defmethod ast->xml :field [loc]
+  (as-> loc l
+        (zip/replace l :category)
+        (zip/next l)
+        (zip/edit l #(assoc {} :field %))))
+
 (defn ast->csl [ast]
   (loop [loc (zip/vector-zip ast)]
     (if (zip/end? loc)
