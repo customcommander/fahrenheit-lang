@@ -1,40 +1,57 @@
 (ns fahrenheit-lang.compiler.csl
-  (:require [clojure.data.xml :as xml]))
+  (:require [clojure.data.xml :as xml]
+            [clojure.zip :as zip]))
 
-(defmulti ast->xml-info first)
+(defmulti ast->xml zip/node)
 
-(defmethod ast->xml-info :default [[k v]]
-  [k {} v])
+(defmethod ast->xml :default [loc] loc)
 
-(defmethod ast->xml-info :url [[k v]]
-  [:link {:href v :rel "self"}])
+(defmethod ast->xml :program [loc]
+  (zip/replace loc :style))
 
-(defmethod ast->xml-info :template [[k v]]
-  [:link {:href v :rel "template"}])
+(defmethod ast->xml :about [loc]
+  (as-> loc l
+        (zip/replace l :info)
+        (zip/next l)
+        (zip/replace l [:title (zip/node l)])))
 
-(defmethod ast->xml-info :documentation [[k v]]
-  [:link {:href v :rel "documentation"}])
+(defmethod ast->xml :url [loc]
+  (as-> loc l
+        (zip/replace l :link)
+        (zip/next l)
+        (zip/edit l #(assoc {:rel "self"} :href %))))
 
-(defmethod ast->xml-info :author [[_ name]]
-  [:author {}
-    [:name {} name]])
+(defmethod ast->xml :documentation [loc]
+  (as-> loc l
+        (zip/replace l :link)
+        (zip/next l)
+        (zip/edit l #(assoc {:rel "documentation"} :href %))))
 
-(defmethod ast->xml-info :author-extended [[_ name & rest]]
-  (let [author (into {} (cons [:name name] rest))]
-    [:author {}
-      [:name {} (:name author)]
-      (when (:email author)
-        [:email {} (:email author)])
-      (when (:website author)
-        [:uri {} (:website author)])]))
+(defmethod ast->xml :template [loc]
+  (as-> loc l
+        (zip/replace l :link)
+        (zip/next l)
+        (zip/edit l #(assoc {:rel "template"} :href %))))
 
-(defmulti ast->xml first)
+(defmethod ast->xml :author [loc]
+  (as-> loc l
+        (zip/next l)
+        (zip/edit l #(conj [:name] %))))
 
-(defmethod ast->xml :program [[_ & ast]]
-  (->>  [:style {} (ast->xml (first ast))]
-        xml/sexp-as-element
-        xml/indent-str))
+(defmethod ast->xml :author-extended [loc]
+  (as-> loc l
+        (zip/replace l :author)
+        (zip/next l)
+        (zip/edit l #(conj [:name] %))))
 
-(defmethod ast->xml :about [[_ title & ast]]
-  (let [info (map ast->xml-info (cons [:title title] ast))]
-    `[:info {} ~@info]))
+(defmethod ast->xml :website [loc]
+  (zip/replace loc :uri))
+
+(defn ast->csl [ast]
+  (loop [loc (zip/vector-zip ast)]
+    (if (zip/end? loc)
+      (-> loc
+          zip/root
+          xml/sexp-as-element
+          xml/indent-str)
+      (recur (-> loc ast->xml zip/next)))))

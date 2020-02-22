@@ -16,5 +16,5 @@
           (slurp x)
           (parse x)
           (do (pp/pprint x) x)
-          (comp/ast->xml x)
+          (comp/ast->csl x)
           (print x))))
