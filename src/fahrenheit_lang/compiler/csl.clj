@@ -1,6 +1,7 @@
 (ns fahrenheit-lang.compiler.csl
   (:require [clojure.data.xml :as xml]
-            [clojure.zip :as zip]))
+            [clojure.zip :as zip]
+            [clojure.string :as str]))
 
 (defmulti ast->xml zip/node)
 
@@ -54,10 +55,19 @@
         (zip/edit l #(assoc {} :citation-format %))))
 
 (defmethod ast->xml :field [loc]
-  (as-> loc l
-        (zip/replace l :category)
-        (zip/next l)
-        (zip/edit l #(assoc {} :field %))))
+  (let [field (first (zip/rights loc))
+        fields (map str/trim (str/split field #","))]
+    (if (= 1 (count fields))
+      (-> loc
+          (zip/replace :category)
+          (zip/next)
+          (zip/replace {:field (first fields)}))
+      (loop [l (zip/up loc)
+             f fields]
+        (if (empty? f)
+          (zip/remove l)
+          (recur (zip/insert-right l [:category {:field (first f)}])
+                 (rest f)))))))
 
 (defn ast->csl [ast]
   (loop [loc (zip/vector-zip ast)]
