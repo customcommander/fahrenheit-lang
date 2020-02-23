@@ -39,12 +39,6 @@
         (zip/next l)
         (zip/edit l #(conj [:name] %))))
 
-(defmethod ast->xml :author-extended [loc]
-  (as-> loc l
-        (zip/replace l :author)
-        (zip/next l)
-        (zip/edit l #(conj [:name] %))))
-
 (defmethod ast->xml :website [loc]
   (zip/replace loc :uri))
 

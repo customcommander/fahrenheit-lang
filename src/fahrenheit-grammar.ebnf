@@ -11,7 +11,6 @@ about =
 |   template
 |   documentation
 |   author
-|   author-extended
 |   issn
 |   eissn
 |   issnl
@@ -21,13 +20,17 @@ about =
 |   published
 |   updated
 
+<author-statement> =
+    email
+|   website
+
 id = <'id'> str
 url = <'url'> str
 template = <'template'> str
 documentation = <'documentation'> str
 email = <'email'> str
 website = <'website'> str
-author = <'author'> str
+author = (<'author'> str) | (<'author'> str <'{'> author-statement+ <'}'>)
 issn = <'issn'> str
 eissn = <'eissn'> str
 issnl = <'issnl'> str
@@ -36,15 +39,6 @@ field = <'field'> str
 summary = <'summary'> str
 published = <'published'> str
 updated = <'updated'> str
-
-<author-statement> =
-    email
-|   website
-
-author-extended =
-    <'author'> str <'{'>
-        author-statement+
-    <'}'>
 
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
