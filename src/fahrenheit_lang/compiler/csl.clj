@@ -48,6 +48,9 @@
         (zip/next l)
         (zip/edit l #(assoc {} :citation-format %))))
 
+(defmethod ast->xml :alias [loc]
+  (zip/replace loc :title-short))
+
 (defmethod ast->xml :field [loc]
   (let [field (first (zip/rights loc))
         fields (map str/trim (str/split field #","))]

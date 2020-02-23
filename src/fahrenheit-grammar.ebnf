@@ -19,6 +19,7 @@ about =
 |   summary
 |   published
 |   updated
+|   alias
 
 <author-statement> =
     email
@@ -39,6 +40,7 @@ field = <'field'> str
 summary = <'summary'> str
 published = <'published'> str
 updated = <'updated'> str
+alias = <'alias'> str
 
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
