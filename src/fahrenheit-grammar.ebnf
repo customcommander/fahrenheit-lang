@@ -27,9 +27,9 @@ about =
 |   website
 
 id = <'id'> str
-url = <'url'> str
-template = <'template'> str
-documentation = <'documentation'> str
+url = <'url'> str langcode?
+template = <'template'> str langcode?
+documentation = <'documentation'> str langcode?
 email = <'email'> str
 website = <'website'> str
 author = (<'author'> str) | (<'author'> str <'{'> author-statement+ <'}'>)
@@ -38,11 +38,12 @@ eissn = <'eissn'> str
 issnl = <'issnl'> str
 citation-format = <'citation-format'> str
 field = <'field'> str
-summary = <'summary'> str
+summary = <'summary'> str langcode?
 published = <'published'> str
 updated = <'updated'> str
-title = <'title'> str
-title-short = <'title-short'> str
+title = <'title'> str langcode?
+title-short = <'title-short'> str langcode?
 
+<langcode> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'

@@ -13,23 +13,53 @@
 (defmethod ast->xml :about [loc]
   (zip/replace loc :info))
 
+(defmethod ast->xml :title [loc]
+  (let [[title lang] (zip/rights loc)]
+    (if (nil? lang)
+      loc
+      (-> loc
+          (zip/up)
+          (zip/replace [:title {:xml:lang lang} title])
+          (zip/right)))))
+
+(defmethod ast->xml :title-short [loc]
+  (let [[title lang] (zip/rights loc)]
+    (if (nil? lang)
+      loc
+      (-> loc
+          (zip/up)
+          (zip/replace [:title-short {:xml:lang lang} title])
+          (zip/right)))))
+
+(defmethod ast->xml :summary [loc]
+  (let [[summary lang] (zip/rights loc)]
+    (if (nil? lang)
+      loc
+      (-> loc
+          (zip/up)
+          (zip/replace [:summary {:xml:lang lang} summary])
+          (zip/right)))))
+
 (defmethod ast->xml :url [loc]
-  (as-> loc l
-        (zip/replace l :link)
-        (zip/next l)
-        (zip/edit l #(assoc {:rel "self"} :href %))))
+  (let [[uri lang] (zip/rights loc)]
+    (-> loc
+        (zip/up)
+        (zip/replace [:link (merge {:rel "self" :href uri}
+                                   (when-not (nil? lang) {:xml:lang lang}))]))))
 
 (defmethod ast->xml :documentation [loc]
-  (as-> loc l
-        (zip/replace l :link)
-        (zip/next l)
-        (zip/edit l #(assoc {:rel "documentation"} :href %))))
+  (let [[uri lang] (zip/rights loc)]
+    (-> loc
+        (zip/up)
+        (zip/replace [:link (merge {:rel "documentation" :href uri}
+                                   (when-not (nil? lang) {:xml:lang lang}))]))))
 
 (defmethod ast->xml :template [loc]
-  (as-> loc l
-        (zip/replace l :link)
-        (zip/next l)
-        (zip/edit l #(assoc {:rel "template"} :href %))))
+  (let [[uri lang] (zip/rights loc)]
+    (-> loc
+        (zip/up)
+        (zip/replace [:link (merge {:rel "template" :href uri}
+                                   (when-not (nil? lang) {:xml:lang lang}))]))))
 
 (defmethod ast->xml :author [loc]
   (as-> loc l
