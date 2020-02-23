@@ -18,7 +18,8 @@ The `fahrenheit` language aims to offer an improved styles authoring experience 
 Here's a contrived example:
 
 ```
-about "My Style" {
+about {
+  title         "My Style"
   id            "https://example.com/styles/my-style"
   url           "https://example.com/styles/my-style"
   documentation "https://example.com/styles/my-style/doc"

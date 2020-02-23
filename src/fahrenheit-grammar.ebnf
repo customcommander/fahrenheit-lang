@@ -1,12 +1,14 @@
 program = about
 
 about =
-    <'about'> str <'{'>
+    <'about'> <'{'>
         about-statement+
     <'}'>
 
 <about-statement> =
     id
+|   title
+|   title-short
 |   url
 |   template
 |   documentation
@@ -19,7 +21,6 @@ about =
 |   summary
 |   published
 |   updated
-|   alias
 
 <author-statement> =
     email
@@ -40,7 +41,8 @@ field = <'field'> str
 summary = <'summary'> str
 published = <'published'> str
 updated = <'updated'> str
-alias = <'alias'> str
+title = <'title'> str
+title-short = <'title-short'> str
 
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'

@@ -11,10 +11,7 @@
   (zip/replace loc :style))
 
 (defmethod ast->xml :about [loc]
-  (as-> loc l
-        (zip/replace l :info)
-        (zip/next l)
-        (zip/replace l [:title (zip/node l)])))
+  (zip/replace loc :info))
 
 (defmethod ast->xml :url [loc]
   (as-> loc l
@@ -47,9 +44,6 @@
         (zip/replace l :category)
         (zip/next l)
         (zip/edit l #(assoc {} :citation-format %))))
-
-(defmethod ast->xml :alias [loc]
-  (zip/replace loc :title-short))
 
 (defmethod ast->xml :field [loc]
   (let [field (first (zip/rights loc))
