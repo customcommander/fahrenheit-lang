@@ -7,6 +7,9 @@
   "Returns string s without its first character."
   (str/join (rest s)))
 
+(defn clean-map [m]
+  (into {} (filter (comp some? val) m)))
+
 (derive ::author ::person)
 (derive ::contributor ::person)
 
@@ -118,7 +121,7 @@
       (zip/next)))
 
 (defmethod ast->xml ::output-modifier [loc]
-  (let [modifiers (into {} (zip/rights loc))]
+  (let [modifiers (zip/node (zip/next loc))]
     (-> loc
         (zip/up)
         (zip/remove)
