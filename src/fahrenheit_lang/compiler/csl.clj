@@ -118,14 +118,11 @@
       (zip/next)))
 
 (defmethod ast->xml ::output-modifier [loc]
-  (let [modifiers (into {} (zip/rights loc))
-        attrs (into {} (filter (comp some? val) {:prefix (:prefix modifiers)
-                                                 :suffix (:suffix modifiers)
-                                                 :delimiter (:delimiter modifiers)}))]
+  (let [modifiers (into {} (zip/rights loc))]
     (-> loc
         (zip/up)
         (zip/remove)
-        (zip/edit #(merge % attrs)))))
+        (zip/edit #(merge % modifiers)))))
 
 (defmethod ast->xml ::print [loc]
   (-> loc

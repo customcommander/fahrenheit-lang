@@ -53,14 +53,26 @@ title-short = <'title-short'> str langcode?
 license = <'license'> str
 
 
-prefix    = <'-p'> str
-suffix    = <'-s'> str
-delimiter = <'-d'> str
+prefix          = <'-p'> str
+suffix          = <'-s'> str
+delimiter       = <'-d'> str
+font-style      = <'-fs'> <'"'> ('normal' | 'italique' | 'oblique')                   <'"'>
+font-variant    = <'-fv'> <'"'> ('normal' | 'small-caps')                             <'"'>
+font-weight     = <'-fw'> <'"'> ('normal' | 'bold' | 'light')                         <'"'>
+text-decoration = <'-td'> <'"'> ('none' | 'underline')                                <'"'>
+vertical-align  = <'-va'> <'"'> ('baseline' | 'sup' | 'sub')                          <'"'>
+display         = <'-d'>  <'"'> ('block' | 'left-margin' | 'right-inline' | 'indent') <'"'>
 
 <modifier> =
     prefix
 |   suffix
 |   delimiter
+|   font-style
+|   font-variant
+|   font-weight
+|   text-decoration
+|   vertical-align
+|   display
 
 output-modifier = modifier+
 
