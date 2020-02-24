@@ -64,6 +64,9 @@ delimiter = <'-d'> str
 
 output-modifier = modifier+
 
+print = <'print'> output-modifier? var
+var = '$title'
+
 <langcode> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
@@ -71,4 +74,5 @@ str = <'"'> chr* <'"'>
 citation =
     <'citation'> <'{'>
         output-modifier?
+        print*
     <'}'>

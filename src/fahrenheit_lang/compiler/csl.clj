@@ -3,6 +3,10 @@
             [clojure.zip :as zip]
             [clojure.string :as str]))
 
+(defn tailstr [s]
+  "Returns string s without its first character."
+  (str/join (rest s)))
+
 (derive ::author ::person)
 (derive ::contributor ::person)
 
@@ -13,6 +17,8 @@
 (derive ::url ::link)
 (derive ::documentation ::link)
 (derive ::template ::link)
+
+(derive ::var ::printable)
 
 ; I don't like hardcoding the namespace as a string but I couldn't find another way.
 ; I tried is to use `(str *ns*)` but that returned "user" instead of "fahrenheit-lang.compiler.csl"!?
@@ -105,6 +111,12 @@
         (zip/down)
         (zip/next))))
 
+(defmethod ast->xml ::layout [loc]
+  (-> loc
+      (zip/insert-right {})
+      (zip/next)
+      (zip/next)))
+
 (defmethod ast->xml ::output-modifier [loc]
   (let [modifiers (into {} (zip/rights loc))
         attrs (into {} (filter (comp some? val) {:prefix (:prefix modifiers)
@@ -112,7 +124,22 @@
                                                  :delimiter (:delimiter modifiers)}))]
     (-> loc
         (zip/up)
-        (zip/replace attrs))))
+        (zip/remove)
+        (zip/edit #(merge % attrs)))))
+
+(defmethod ast->xml ::print [loc]
+  (-> loc
+      (zip/replace :text)
+      (zip/insert-right {})
+      (zip/next)
+      (zip/next)))
+
+(defmethod ast->xml ::printable [loc]
+  (let [[node content] (zip/children (zip/up loc))]
+    (-> loc
+        (zip/up)
+        (zip/remove)
+        (zip/edit #(merge % ((keyword node) {:var {:variable (tailstr content)}}))))))
 
 (defn ast->csl [ast]
   (loop [loc (zip/vector-zip ast)]
