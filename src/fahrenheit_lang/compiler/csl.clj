@@ -96,6 +96,24 @@
         (zip/replace [:rights {:license uri :xml:lang "en"} fullname])
         (zip/right))))
 
+
+(defmethod ast->xml ::citation [loc]
+  (let [siblings (zip/rights loc)]
+    (-> loc
+        (zip/up)
+        (zip/replace [:citation `[:layout ~@siblings]])
+        (zip/down)
+        (zip/next))))
+
+(defmethod ast->xml ::output-modifier [loc]
+  (let [modifiers (into {} (zip/rights loc))
+        attrs (into {} (filter (comp some? val) {:prefix (:prefix modifiers)
+                                                 :suffix (:suffix modifiers)
+                                                 :delimiter (:delimiter modifiers)}))]
+    (-> loc
+        (zip/up)
+        (zip/replace attrs))))
+
 (defn ast->csl [ast]
   (loop [loc (zip/vector-zip ast)]
     (if (zip/end? loc)

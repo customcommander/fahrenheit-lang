@@ -1,4 +1,8 @@
-program = about
+program = program-statement+
+
+<program-statement> =
+    about
+|   citation
 
 about =
     <'about'> <'{'>
@@ -48,6 +52,23 @@ title = <'title'> str langcode?
 title-short = <'title-short'> str langcode?
 license = <'license'> str
 
+
+prefix    = <'-p'> str
+suffix    = <'-s'> str
+delimiter = <'-d'> str
+
+<modifier> =
+    prefix
+|   suffix
+|   delimiter
+
+output-modifier = modifier+
+
 <langcode> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
+
+citation =
+    <'citation'> <'{'>
+        output-modifier?
+    <'}'>
