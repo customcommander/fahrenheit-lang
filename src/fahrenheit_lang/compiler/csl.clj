@@ -4,6 +4,7 @@
             [clojure.string :as str]))
 
 (derive ::author ::person)
+(derive ::contributor ::person)
 
 (derive ::title ::node-with-lang)
 (derive ::title-short ::node-with-lang)

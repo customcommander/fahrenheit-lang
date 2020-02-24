@@ -13,6 +13,7 @@ about =
 |   template
 |   documentation
 |   author
+|   contributor
 |   issn
 |   eissn
 |   issnl
@@ -22,7 +23,7 @@ about =
 |   published
 |   updated
 
-<author-statement> =
+<person-statement> =
     email
 |   website
 
@@ -32,7 +33,8 @@ template = <'template'> str langcode?
 documentation = <'documentation'> str langcode?
 email = <'email'> str
 website = <'website'> str
-author = (<'author'> str) | (<'author'> str <'{'> author-statement+ <'}'>)
+author = (<'author'> str) | (<'author'> str <'{'> person-statement+ <'}'>)
+contributor = (<'contributor'> str) | (<'contributor'> str <'{'> person-statement+ <'}'>)
 issn = <'issn'> str
 eissn = <'eissn'> str
 issnl = <'issnl'> str
