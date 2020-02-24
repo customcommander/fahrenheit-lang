@@ -22,6 +22,7 @@ about =
 |   summary
 |   published
 |   updated
+|   license
 
 <person-statement> =
     email
@@ -45,6 +46,7 @@ published = <'published'> str
 updated = <'updated'> str
 title = <'title'> str langcode?
 title-short = <'title-short'> str langcode?
+license = <'license'> str
 
 <langcode> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>

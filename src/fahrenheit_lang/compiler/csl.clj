@@ -86,6 +86,16 @@
           (recur (zip/insert-right l [:category {:field (first f)}])
                  (rest f)))))))
 
+; based on https://spdx.org/licenses/
+(defmethod ast->xml ::license [loc]
+  (let [identifier (keyword (zip/node (zip/next loc)))
+        fullname (identifier {:CC-BY-SA-3.0 "Creative Commons Attribution Share Alike 3.0 Unported"})
+        uri (identifier {:CC-BY-SA-3.0 "https://creativecommons.org/licenses/by-sa/3.0/"})]
+    (-> loc
+        (zip/up)
+        (zip/replace [:rights {:license uri :xml:lang "en"} fullname])
+        (zip/right))))
+
 (defn ast->csl [ast]
   (loop [loc (zip/vector-zip ast)]
     (if (zip/end? loc)
