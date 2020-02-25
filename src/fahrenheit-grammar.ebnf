@@ -74,17 +74,18 @@ display = <'--'> ('left' | 'right' | 'indent')
 
 modifiers = modifier+
 
-print = <'print'> modifiers? var
+print = <'print'> modifiers? (var-txt | var-num)
 
-var = '$title'
-    | '$chapter-number'
-    | '$collection-number'
-    | '$edition'
-    | '$issue'
-    | '$number'
-    | '$number-of-pages'
-    | '$number-of-volumes'
-    | '$volume'
+var-txt = <'$'>'title'
+
+var-num = <'$'>'chapter-number'
+        | <'$'>'collection-number'
+        | <'$'>'edition'
+        | <'$'>'issue'
+        | <'$'>'number'
+        | <'$'>'number-of-pages'
+        | <'$'>'number-of-volumes'
+        | <'$'>'volume'
 
 <langcode> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>
