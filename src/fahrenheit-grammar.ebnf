@@ -72,10 +72,19 @@ display = <'--'> ('left' | 'right' | 'indent')
            | vertical-align
            | display
 
-output-modifier = modifier+
+modifiers = modifier+
 
-print = <'print'> output-modifier? var
+print = <'print'> modifiers? var
+
 var = '$title'
+    | '$chapter-number'
+    | '$collection-number'
+    | '$edition'
+    | '$issue'
+    | '$number'
+    | '$number-of-pages'
+    | '$number-of-volumes'
+    | '$volume'
 
 <langcode> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>
@@ -83,6 +92,6 @@ str = <'"'> chr* <'"'>
 
 citation =
     <'citation'> <'{'>
-        output-modifier?
+        modifiers?
         print*
     <'}'>

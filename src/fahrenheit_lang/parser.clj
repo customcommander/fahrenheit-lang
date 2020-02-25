@@ -26,4 +26,4 @@
            :font-variant #(hash-map :font-variant %)
            :font-weight #(hash-map :font-weight ((keyword %) font-weight))
            :display #(hash-map :display ((keyword %) display))
-           :output-modifier (fn [& m] [:output-modifier (into {} m)])})))
+           :modifiers (fn [& m] [:modifiers (into {} m)])})))
