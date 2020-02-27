@@ -4,7 +4,8 @@
    [clojure.pprint :as pp]
    [clojure.tools.cli :refer [parse-opts]]
    [fahrenheit-lang.parser :refer [parse]]
-   [fahrenheit-lang.compiler.csl :as comp]))
+   [fahrenheit-lang.transform :as ft]
+   [fahrenheit-lang.csl :as csl]))
 
 (def cli-options
   [["-f" "--file FILE" "*.fahr file"]])
@@ -16,5 +17,7 @@
           (slurp x)
           (parse x)
           (do (pp/pprint x) x)
-          (comp/ast->csl x)
+          (ft/transform x)
+          (do (pp/pprint x) x)
+          (csl/gen-code x)
           (print x))))

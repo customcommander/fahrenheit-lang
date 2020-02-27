@@ -6,51 +6,48 @@ program = program-statement+
 
 about =
     <'about'> <'{'>
-        about-statement+
+        meta-statement+
     <'}'>
 
-<about-statement> =
-    id
-|   title
-|   title-short
-|   url
-|   template
-|   documentation
-|   author
-|   contributor
-|   issn
-|   eissn
-|   issnl
-|   citation-format
-|   field
-|   summary
-|   published
-|   updated
-|   license
+<person-detail-statement> = email
+                          | url
 
-<person-statement> =
-    email
-|   website
+meta-statement = id
+               | issn
+               | eissn
+               | issnl
+               | title
+               | title-short
+               | summary
+               | published
+               | updated
+               | citation-format
+               | field-statement
+               | license
+               | url
+               | documentation
+               | template
+               | person-statement
 
 id = <'id'> str
-url = <'url'> str langcode?
-template = <'template'> str langcode?
-documentation = <'documentation'> str langcode?
+url = <'url'> str lang?
+template = <'template'> str lang?
+documentation = <'documentation'> str lang?
 email = <'email'> str
-website = <'website'> str
-author = (<'author'> str) | (<'author'> str <'{'> person-statement+ <'}'>)
-contributor = (<'contributor'> str) | (<'contributor'> str <'{'> person-statement+ <'}'>)
+author = (<'author'> str) | (<'author'> str <'{'> person-detail-statement+ <'}'>)
+contributor = (<'contributor'> str) | (<'contributor'> str <'{'> person-detail-statement+ <'}'>)
+person-statement = author | contributor
 issn = <'issn'> str
 eissn = <'eissn'> str
 issnl = <'issnl'> str
 citation-format = <'citation-format'> str
-field = <'field'> str
-summary = <'summary'> str langcode?
+field-statement = <'field'> str
+summary = <'summary'> str lang?
 published = <'published'> str
 updated = <'updated'> str
-title = <'title'> str langcode?
-title-short = <'title-short'> str langcode?
-license = <'license'> str
+title = <'title'> str lang?
+title-short = <'title-short'> str lang?
+license = <'license'> str lang?
 
 prefix = <'--prefix'> str
 suffix = <'--suffix'> str
@@ -87,7 +84,7 @@ var-num = <'$'>'chapter-number'
         | <'$'>'number-of-volumes'
         | <'$'>'volume'
 
-<langcode> = <'('> #'[a-zA-Z-]+' <')'>
+<lang> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>
 <chr> = #'[^"]'
 
