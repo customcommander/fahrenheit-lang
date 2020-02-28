@@ -49,14 +49,10 @@
                (zip/insert-left up [:field {:value (first fields)}]))))))
 
 (defmethod transform-ast :citation [loc]
-  (let [siblings (zip/rights loc)
-        [head & tail] siblings]
+  (let [siblings (zip/rights loc)]
     (-> loc
         (zip/up)
-        (zip/replace (if (= :modifiers (first head))
-                         `[:citation [:foreach-cite ~(second head) ~@tail]]
-                         `[:citation [:foreach-cite {} ~@(cons head tail)]]))
-        (zip/down)
+        (zip/replace `[:citation [:foreach-cite {} ~@siblings]])
         (zip/next))))
 
 (defmethod transform-ast :print [loc]
