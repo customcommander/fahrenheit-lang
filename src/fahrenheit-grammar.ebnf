@@ -71,7 +71,11 @@ display = <'--'> ('left' | 'right' | 'indent')
 
 modifiers = modifier+
 
-print = <'print'> modifiers? (var-txt | var-num)
+print = <'print'> modifiers? var
+
+var = var-txt
+    | var-num
+    | var-term
 
 var-txt = <'$'>'title'
 
@@ -83,6 +87,21 @@ var-num = <'$'>'chapter-number'
         | <'$'>'number-of-pages'
         | <'$'>'number-of-volumes'
         | <'$'>'volume'
+
+var-term = <'&'>'author'
+         | <'&'>'collection-editor'
+         | <'&'>'composer'
+         | <'&'>'container-author'
+         | <'&'>'director'
+         | <'&'>'editor'
+         | <'&'>'editorial-director'
+         | <'&'>'editortranslator'
+         | <'&'>'illustrator'
+         | <'&'>'interviewer'
+         | <'&'>'original-author'
+         | <'&'>'recipient'
+         | <'&'>'reviewed-author'
+         | <'&'>'translator'
 
 <lang> = <'('> #'[a-zA-Z-]+' <')'>
 str = <'"'> chr* <'"'>

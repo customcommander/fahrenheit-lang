@@ -60,13 +60,24 @@
         (zip/next))))
 
 (defmethod transform-ast :print [loc]
-  (let [[a b] (zip/rights loc)
-        modifiers (if (some? b) (second a) {})
-        [cmd-name cmd-value] (if (some? b) b a)
-        cmd-name-map {:var-txt :print-text :var-num :print-number}]
+  (zip/insert-right loc {}))
+
+(defmethod transform-ast :modifiers [loc]
+  (let [args (zip/rights loc)]
     (-> loc
         (zip/up)
-        (zip/replace [(cmd-name cmd-name-map) modifiers cmd-value]))))
+        (zip/remove)
+        (zip/edit #(merge % (into {} args))))))
+
+(defmethod transform-ast :var [loc]
+  (let [[kind id] (zip/node (zip/next loc))]
+    (-> loc
+        (zip/up)
+        (zip/remove)
+        (zip/edit #(merge % {:kind (kind {:var-txt :text
+                                          :var-num :number
+                                          :var-term :term})
+                             :var id})))))
 
 (defn transform [ast]
   (loop [loc (zip/vector-zip ast)]
