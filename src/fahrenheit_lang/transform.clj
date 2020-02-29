@@ -56,7 +56,10 @@
         (zip/next))))
 
 (defmethod transform-ast :print [loc]
-  (zip/insert-right loc {}))
+  (let [[head & tail] (zip/node (zip/next loc))]
+    (-> loc
+        (zip/up)
+        (zip/replace `[~head {} ~@tail]))))
 
 (defmethod transform-ast :modifiers [loc]
   (let [args (zip/rights loc)]
@@ -65,15 +68,17 @@
         (zip/remove)
         (zip/edit #(merge % (into {} args))))))
 
-(defmethod transform-ast :var [loc]
-  (let [[kind id] (zip/node (zip/next loc))]
+(defn transform-var [loc]
+  (let [id (zip/node (zip/next loc))]
     (-> loc
         (zip/up)
         (zip/remove)
-        (zip/edit #(merge % {:kind (kind {:var-txt :text
-                                          :var-num :number
-                                          :var-term :term})
-                             :var id})))))
+        (zip/edit #(merge % {:variable id})))))
+
+(defmethod transform-ast :var-txt [loc] (transform-var loc))
+(defmethod transform-ast :var-num [loc] (transform-var loc))
+(defmethod transform-ast :var-term [loc] (transform-var loc))
+(defmethod transform-ast :var-date [loc] (transform-var loc))
 
 (defn transform [ast]
   (loop [loc (zip/vector-zip ast)]

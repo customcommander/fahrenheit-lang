@@ -97,20 +97,27 @@
 (defmethod ->csl :foreach-cite [loc]
   (zip/replace loc :layout))
 
-(defmethod ->csl :print [loc]
-  (let [args (zip/node (zip/next loc))
-        node ((:kind args) {:text :text
-                            :term :text
-                            :number :number})
-        var ((:kind args) {:text :variable
-                           :number :variable
-                           :term :term})]
+(defmethod ->csl :print-text [loc]
+  (let [args (zip/node (zip/next loc))]
     (-> loc
-        (zip/replace node)
+        (zip/replace :text))))
+
+(defmethod ->csl :print-num [loc]
+  (let [args (zip/node (zip/next loc))]
+    (-> loc
+        (zip/replace :number))))
+
+(defmethod ->csl :print-date [loc]
+  (let [args (zip/node (zip/next loc))]
+    (-> loc
+        (zip/replace :date))))
+
+(defmethod ->csl :print-term [loc]
+  (let [args (zip/node (zip/next loc))]
+    (-> loc
+        (zip/replace :text)
         (zip/next)
-        (zip/edit #(-> %
-                       (dissoc :kind)
-                       (st/rename-keys {:var var}))))))
+        (zip/edit #(st/rename-keys % {:variable :term})))))
 
 (defn gen-code [ast]
   (loop [loc (zip/vector-zip ast)]

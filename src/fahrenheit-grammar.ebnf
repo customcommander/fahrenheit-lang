@@ -71,11 +71,22 @@ display = <'--'> ('left' | 'right' | 'indent')
 
 modifiers = modifier+
 
-print = <'print'> modifiers? var
+print = print-text
+      | print-num
+      | print-term
+      | print-date
 
-var = var-txt
-    | var-num
-    | var-term
+print-text = <'print'> modifiers? var-txt
+print-num = <'print'> modifiers? var-num
+print-term = <'print'> modifiers? var-term
+print-date = <'print'> modifiers? var-date
+
+var-date = <'$'>'accessed'
+         | <'$'>'container'
+         | <'$'>'event-date'
+         | <'$'>'issued'
+         | <'$'>'original-date'
+         | <'$'>'submitted'
 
 var-txt = <'$'>'title'
 
