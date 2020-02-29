@@ -61,7 +61,7 @@
         (zip/up)
         (zip/replace `[~head {} ~@tail]))))
 
-(defmethod transform-ast :modifiers [loc]
+(defmethod transform-ast :args [loc]
   (let [args (zip/rights loc)]
     (-> loc
         (zip/up)
