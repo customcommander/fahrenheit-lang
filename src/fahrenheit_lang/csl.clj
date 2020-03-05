@@ -124,8 +124,8 @@
             (date-part-args [m]
               (as-> m new-m
                 (st/rename-keys new-m key-map)
-                (assoc new-m :form ((:form new-m) form-map))
-                (assoc new-m :name ((:name new-m) name-map))))
+                (assoc new-m :form ((:form new-m) form-map)
+                             :name ((:name new-m) name-map))))
 
             (date-part [m]
               [:date-part (date-part-args m)])]
