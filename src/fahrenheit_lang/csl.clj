@@ -108,9 +108,31 @@
         (zip/replace :number))))
 
 (defmethod ->csl :print-date [loc]
-  (let [args (zip/node (zip/next loc))]
-    (-> loc
-        (zip/replace :date))))
+  (let [args (zip/node (zip/next loc))
+        key-map {:part   :name
+                 :format :form}
+
+        form-map {:n "numeric"}
+
+        name-map {:year  "year"
+                  :month "month"
+                  :day   "day"}]
+
+    (letfn [(date-args [m]
+              (dissoc m :date-format))
+
+            (date-part-args [m]
+              (as-> m new-m
+                (st/rename-keys new-m key-map)
+                (assoc new-m :form ((:form new-m) form-map))
+                (assoc new-m :name ((:name new-m) name-map))))
+
+            (date-part [m]
+              [:date-part (date-part-args m)])]
+      (-> loc
+          (zip/up)
+          (zip/replace `[:date ~(date-args args)
+                          ~@(map date-part (:date-format args))])))))
 
 (defmethod ->csl :print-term [loc]
   (let [args (zip/node (zip/next loc))]

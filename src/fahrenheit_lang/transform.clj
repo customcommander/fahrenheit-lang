@@ -4,7 +4,72 @@
 (ns fahrenheit-lang.transform
   (:require
    [clojure.zip :as zip]
-   [clojure.string :as string]))
+   [clojure.string :as string]
+   [clojure.set :as st]))
+
+(defn group-date-formats [args]
+  (loop [in args
+         out [[] []]]
+    (if (empty? in)
+      `[~@(first out) ~[:date-format (second out)]]
+      (recur (rest in)
+             (let [arg (first in)
+                   arg-name (first arg)
+                   [a b] out]
+              (if (or (= arg-name :date-format-year)
+                      (= arg-name :date-format-month)
+                      (= arg-name :date-format-day))
+                [a (conj b arg)]
+                [(conj a arg) b]))))))
+
+(defmulti transform-arg first)
+
+; [:foo "bar"] -> {:foo "bar"}
+(defmethod transform-arg :default [[k v]] {k v})
+
+(defmethod transform-arg :date-format [[k v]]
+  (letfn [
+          ; add some default values to given map
+          (with-defaults [m]
+            (if (some? (:format m))
+              m
+              (assoc m :format (condp = (:part m)
+                                  :year  :n
+                                  :month :n
+                                  :day   :n))))
+
+          ; some things should be renamed
+          (rename [x]
+            (condp = x
+              :date-format-year  :year
+              :date-format-month :month
+              :date-format-day   :day
+              :date-prefix       :prefix
+              :date-suffix       :suffix
+              :date-formatter    :format
+              "n"                :n
+                                 x))
+
+          ; map a vector of specs into a map of specs that is easier to consume
+          ;
+          ; from:
+          ;
+          ; [:date-format-day [:date-prefix "("]
+          ;                   [:date-formatter "n"]
+          ;                   [:date-suffix "("]]
+          ;
+          ; to:
+          ;
+          ; {:prefix "("
+          ;  :suffix ")"
+          ;  :part :year
+          ;  :format :n}
+          ;
+          (mapper [[fk & fv]]
+            (let [parts (mapcat #(map rename %) `[[:part ~fk] ~@fv])]
+              (with-defaults (apply assoc `[{} ~@parts]))))]
+
+    {:date-format (mapv mapper v)}))
 
 (defmulti transform-ast zip/node)
 
@@ -61,12 +126,15 @@
         (zip/up)
         (zip/replace `[~head {} ~@tail]))))
 
-(defmethod transform-ast :args [loc]
+(defn transform-args [loc]
   (let [args (zip/rights loc)]
     (-> loc
         (zip/up)
         (zip/remove)
-        (zip/edit #(merge % (into {} args))))))
+        (zip/replace (apply merge `[~@(map transform-arg (group-date-formats args))])))))
+
+(defmethod transform-ast :args [loc] (transform-args loc))
+(defmethod transform-ast :date-args [loc] (transform-args loc))
 
 (defn transform-var [loc]
   (let [id (zip/node (zip/next loc))]

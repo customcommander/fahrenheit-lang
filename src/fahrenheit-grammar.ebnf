@@ -49,15 +49,34 @@ title = <'title'> str lang?
 title-short = <'title-short'> str lang?
 license = <'license'> str lang?
 
-prefix          = <'--prefix'> str
-suffix          = <'--suffix'> str
-delimiter       = <'--delimiter'> str
-font-style      = <'--'> ('italique' | 'oblique')
-font-variant    = <'--'> 'small-caps'
-font-weight     = <'--'> ('bold' | 'light-bold')
-text-decoration = <'--'> 'underline'
-vertical-align  = <'--'> ('sup' | 'sub')
-display         = <'--'> ('left' | 'right' | 'indent')
+prefix            = <'--prefix'> str
+suffix            = <'--suffix'> str
+delimiter         = <'--delimiter'> str
+font-style        = <'--'> ('italique' | 'oblique')
+font-variant      = <'--'> 'small-caps'
+font-weight       = <'--'> ('bold' | 'light-bold')
+text-decoration   = <'--'> 'underline'
+vertical-align    = <'--'> ('sup' | 'sub')
+display           = <'--'> ('left' | 'right' | 'indent')
+text-case         = <'--'> ( 'lowercase'
+                           | 'uppercase'
+                           | 'capitalize-first'
+                           | 'capitalize-all'
+                           | 'titlecase'
+                           | 'sentencecase'
+                           )
+
+date-prefix    = #'[^"0n]+'
+date-suffix    = #'[^"0n]+'
+date-formatter = #'(n|0n)'
+
+date-format-year  = <'--year'>  (<'"'> date-prefix? date-formatter date-suffix? <'"'>)?
+date-format-month = <'--month'> (<'"'> date-prefix? date-formatter date-suffix? <'"'>)?
+date-format-day   = <'--day'>   (<'"'> date-prefix? date-formatter date-suffix? <'"'>)?
+
+<date-format-statement> = date-format-year
+                        | date-format-month
+                        | date-format-day
 
 <affixes-statement>    = prefix
                        | suffix
@@ -76,10 +95,17 @@ display         = <'--'> ('left' | 'right' | 'indent')
 
 args = arg+
 
+date-args = ( affixes-statement
+            | display-statement
+            | formatting-statement
+            | text-case
+            | date-format-statement
+            )+
+
 print-text = <'print'> args? var-txt
 print-num  = <'print'> args? var-num
 print-term = <'print'> args? var-term
-print-date = <'print'> args? var-date
+print-date = <'print'> date-args? var-date
 
 print = print-text
       | print-num
