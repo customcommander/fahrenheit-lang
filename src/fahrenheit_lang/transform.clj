@@ -11,7 +11,9 @@
   (loop [in args
          out [[] []]]
     (if (empty? in)
-      `[~@(first out) ~[:date-format (second out)]]
+      (if (empty? (second out))
+        (first out)
+        (cons [:date-format (second out)] (first out)))
       (recur (rest in)
              (let [arg (first in)
                    arg-name (first arg)
