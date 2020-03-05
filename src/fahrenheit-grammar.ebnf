@@ -102,15 +102,19 @@ date-args = ( affixes-statement
             | date-format-statement
             )+
 
-print-text = <'print'> args? var-txt
-print-num  = <'print'> args? var-num
-print-term = <'print'> args? var-term
-print-date = <'print'> date-args? var-date
+print-text  = <'print'> args? var-txt
+print-num   = <'print'> args? var-num
+print-term  = <'print'> args? var-term
+print-date  = <'print'> date-args? var-date
+print-macro = <'print'> args? var-macro
 
 print = print-text
       | print-num
       | print-term
       | print-date
+      | print-macro
+
+var-macro = <'@'>#'[-_0-9a-zA-Z]+'
 
 var-date = <'$'>'accessed'
          | <'$'>'container'

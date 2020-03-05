@@ -141,6 +141,13 @@
         (zip/next)
         (zip/edit #(st/rename-keys % {:variable :term})))))
 
+(defmethod ->csl :print-macro [loc]
+  (let [args (zip/node (zip/next loc))]
+    (-> loc
+        (zip/replace :text)
+        (zip/next)
+        (zip/edit #(st/rename-keys % {:variable :macro})))))
+
 (defn gen-code [ast]
   (loop [loc (zip/vector-zip ast)]
     (if (zip/end? loc)

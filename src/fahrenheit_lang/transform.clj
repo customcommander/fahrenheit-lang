@@ -147,6 +147,7 @@
 (defmethod transform-ast :var-num [loc] (transform-var loc))
 (defmethod transform-ast :var-term [loc] (transform-var loc))
 (defmethod transform-ast :var-date [loc] (transform-var loc))
+(defmethod transform-ast :var-macro [loc] (transform-var loc))
 
 (defn transform [ast]
   (loop [loc (zip/vector-zip ast)]
