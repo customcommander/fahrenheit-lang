@@ -1,8 +1,8 @@
 program = program-statement+
 
-<program-statement> =
-    about
-|   citation
+<program-statement> = about
+                    | citation
+                    | macro
 
 about =
     <'about'> <'{'>
@@ -331,4 +331,8 @@ str = <'"'> chr* <'"'>
 citation =  <'citation'> <'{'>
                 args?
                 print*
+            <'}'>
+
+macro =     <'macro'> str <'{'>
+                print+
             <'}'>

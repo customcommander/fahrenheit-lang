@@ -75,6 +75,18 @@
 
 (defmethod transform-ast :default [loc] loc)
 
+(defmethod transform-ast :program [loc]
+  (let [siblings (zip/rights loc)]
+    (letfn [(take-program [k ast]
+              (filter #(= k (first %)) ast))]
+      (-> loc
+          (zip/up)
+          (zip/replace `[:program
+                          ~@(take-program :about siblings)
+                          [:macros ~@(take-program :macro siblings)]
+                          ~@(take-program :citation siblings)])
+          (zip/next)))))
+
 (defmethod transform-ast :about [loc]
   (let [metadata (zip/rights loc)]
     (-> loc

@@ -37,6 +37,20 @@
 (defmethod ->csl :program [loc]
   (zip/replace loc :style))
 
+(defmethod ->csl :macros [loc]
+  (let [siblings (zip/rights loc)]
+    (loop [new-loc (-> loc zip/up zip/remove zip/next)
+           macros siblings]
+      (if (empty? macros)
+        new-loc
+        (recur (zip/left (zip/insert-left new-loc (first macros)))
+               (rest macros))))))
+
+(defmethod ->csl :macro [loc]
+  (-> loc
+      (zip/next)
+      (zip/edit #(assoc {} :name %))))
+
 (defmethod ->csl :metadata [loc]
   (zip/replace loc :info))
 
