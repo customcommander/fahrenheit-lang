@@ -4,8 +4,10 @@ program = program-statement+
                     | citation
                     | macro
 
-about = <'about'> <':'>
-            meta-statement+
+about =
+    <'about'> <'{'>
+        meta-statement+
+    <'}'>
 
 <person-detail-statement> = email
                           | url
@@ -32,8 +34,8 @@ url = <'url'> str lang?
 template = <'template'> str lang?
 documentation = <'documentation'> str lang?
 email = <'email'> str
-author = (<'author'> str) | (<'author'> str <':'> person-detail-statement+)
-contributor = (<'contributor'> str) | (<'contributor'> str <':'> person-detail-statement+)
+author = (<'author'> str) | (<'author'> str <'{'> person-detail-statement+ <'}'>)
+contributor = (<'contributor'> str) | (<'contributor'> str <'{'> person-detail-statement+ <'}'>)
 person-statement = author | contributor
 issn = <'issn'> str
 eissn = <'eissn'> str
@@ -331,5 +333,6 @@ citation =  <'citation'> <'{'>
                 print*
             <'}'>
 
-macro =     <'macro'> str <':'>
+macro =     <'macro'> str <'{'>
                 print+
+            <'}'>
