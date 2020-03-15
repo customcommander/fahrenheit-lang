@@ -59,12 +59,4 @@ The above code compiles to:
 </style>
 ````
 
-## FAQ
-
-### Why did you call your language "Fahrenheit"?
-
-This is a reference to [Farhenheit 451][the-book] a novel by Ray Bradbury that depicts a future where books are outlawed and burned.
-
-
 [csl-homepage]: https://citationstyles.org/
-[the-book]: https://en.wikipedia.org/wiki/Fahrenheit_451
