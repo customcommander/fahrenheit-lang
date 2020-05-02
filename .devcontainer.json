@@ -1,5 +1,0 @@
-{
-  "name": "fahrenheit-lang",
-  "image": "customcommander/fahrenheit-lang",
-  "extensions": ["tonsky.clojure-warrior"]
-}
