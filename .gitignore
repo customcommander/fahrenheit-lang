@@ -1,4 +1,5 @@
-target/
+.lein-failures
 .lein-repl-history
-test.fahr
 .nrepl-port
+target/
+test.fahr
