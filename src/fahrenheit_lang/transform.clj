@@ -5,7 +5,7 @@
   (:require
    [clojure.zip :as zip]
    [clojure.string :as string]
-   [clojure.set :as st]))
+   [clojure.spec.alpha :as s]))
 
 (defn group-date-formats [args]
   (loop [in args
@@ -168,3 +168,28 @@
     (if (zip/end? loc)
       (zip/root loc)
       (recur (transform-ast (zip/next loc))))))
+
+;; specs
+
+(s/def ::var-kind
+  #{:var-txt
+    :var-num
+    :var-term
+    :var-date
+    :var-macro})
+
+(s/def ::ast-print
+  (s/cat :kind ::var-kind :names (s/+ string?)))
+
+;; spec'ed functions
+
+(defn ast-print [_ & names]
+  {:variable (if (= 1 (count names))
+                 (first names)
+                 (vec names))})
+
+(s/fdef ast-print
+  :args ::ast-print
+  :ret map?
+  :fn #(or (= (:ret %) {:variable (-> % :args :names first)})
+           (= (:ret %) {:variable (-> % :args :names)})))
