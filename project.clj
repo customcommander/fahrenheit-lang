@@ -10,4 +10,5 @@
                  [instaparse "1.4.10"]]
   :main ^:skip-aot fahrenheit-lang.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all}
+             :dev {:dependencies [[org.clojure/test.check "0.9.0"]]}})
