@@ -1,0 +1,10 @@
+{
+  "name": "fahrenheit-dev",
+  "image": "clojure:lein",
+  "extensions": [
+    "tonsky.clojure-warrior"
+  ],
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}/.m2,target=/root/.m2"
+  ]
+}
