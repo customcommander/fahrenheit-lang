@@ -174,22 +174,20 @@
 (s/def ::var-kind
   #{:var-txt
     :var-num
+    :var-name
     :var-term
     :var-date
     :var-macro})
 
-(s/def ::ast-print
-  (s/cat :kind ::var-kind :names (s/+ string?)))
+(s/def ::variable string?)
 
 ;; spec'ed functions
 
-(defn ast-print [_ & names]
-  {:variable (if (= 1 (count names))
-                 (first names)
-                 (vec names))})
+(defn var-> [_ & names]
+  {:variable (first names)})
 
-(s/fdef ast-print
-  :args ::ast-print
-  :ret map?
-  :fn #(or (= (:ret %) {:variable (-> % :args :names first)})
-           (= (:ret %) {:variable (-> % :args :names)})))
+(s/fdef var->
+  :args (s/cat :kind ::var-kind :name (s/+ string?))
+  :ret (s/keys :req-un [::variable])
+  :fn #(= (-> % :ret :variable)
+          (-> % :args :name first)))

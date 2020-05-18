@@ -3,4 +3,4 @@
    [fahrenheit-lang.transform :as sut]
    [fahrenheit-lang.test-helpers :refer [defspec-test]]))
 
-(defspec-test ast-printxx `sut/ast-print)
+(defspec-test transform-var `sut/var->)
