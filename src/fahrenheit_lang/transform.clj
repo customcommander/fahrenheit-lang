@@ -1,11 +1,21 @@
-; The purpose of this program is to transform the original AST
-; into something easier for code generators to consume.
+;;;; Copyright (c) 2020 Julien Gonzalez
+;;;;
+;;;; The purpose of this program is to transform the original AST
+;;;; into something easier for code generators to consume
 
 (ns fahrenheit-lang.transform
   (:require
    [clojure.zip :as zip]
    [clojure.string :as string]
    [clojure.spec.alpha :as s]))
+
+;;; Helper Functions
+;;; ---------------------------------------------------------------------------
+
+(defn var-> [_ & names]
+  "Process a var statement.
+  e.g. [:var-num \"page\"] -> {:variable \"page\"}"
+  {:variable (first names)})
 
 (defn group-date-formats [args]
   (loop [in args
@@ -72,6 +82,9 @@
               (with-defaults (apply assoc `[{} ~@parts]))))]
 
     {:date-format (mapv mapper v)}))
+
+;;; Main
+;;; ---------------------------------------------------------------------------
 
 (defmulti transform-ast zip/node)
 
@@ -169,7 +182,8 @@
       (zip/root loc)
       (recur (transform-ast (zip/next loc))))))
 
-;; specs
+;;; Specs
+;;; ---------------------------------------------------------------------------
 
 (s/def ::var-kind
   #{:var-txt
@@ -181,10 +195,8 @@
 
 (s/def ::variable string?)
 
-;; spec'ed functions
-
-(defn var-> [_ & names]
-  {:variable (first names)})
+;;; Spec'ed Functions
+;;; ---------------------------------------------------------------------------
 
 (s/fdef var->
   :args (s/cat :kind ::var-kind :name (s/+ string?))
