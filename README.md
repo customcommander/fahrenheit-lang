@@ -3,60 +3,36 @@
 
 # fahrenheit-lang
 
-`fahrenheit` is a domain-specific language for authoring citations and bibliographies styles. It compiles to [CSL][csl-homepage].
+`fahrenheit` is a domain-specific language for authoring citations and bibliographies styles. It compiles to [CSL][].
 
 
 
 ## Why?
 
-[CSL][csl-homepage] has become the _de facto_ standard for codifying citations and bibliographies styles. It is widely adopted and has excellent documentation. I have no intention to change that.
+[CSL][] has become the _de facto_ standard for codifying citations and bibliographies styles. It is widely adopted and has excellent documentation. I have no intention to change that.
 
-However authoring citations and bibliographies styles in XML can be tedious and/or verbose.
-
-The `fahrenheit` language aims to offer an improved styles authoring experience while complying to the [CSL][csl-homepage] specification.
+However authoring citations and bibliographies styles in XML can be tedious and/or verbose. The `fahrenheit` language aims to offer an improved styles authoring experience whilst complying to the [CSL][] specification.
 
 Here's a contrived example:
 
-```
-about {
-  title         "My Style"
-  id            "https://example.com/styles/my-style"
-  url           "https://example.com/styles/my-style"
-  documentation "https://example.com/styles/my-style/doc"
-
-  author "Rick Deckard"
-  author "Roy Batty"
-
-  author "Rachael" {
-    email "rachael@example.com"
-    website "https://example.com/~rachael"
-  }
-}
+```clojure
+{:about
+  {:id "http://www.zotero.org/styles/apa"
+   :title [:en "American Psychological Association 7th edition"]
+   :title-short "APA"}}
 ```
 
 The above code compiles to:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<style>
+<style version="1.0">
   <info>
-    <title>My Style</title>
-    <id>https://example.com/styles/my-style</id>
-    <link href="https://example.com/styles/my-style" rel="self"/>
-    <link href="https://example.com/styles/my-style/doc" rel="documentation"/>
-    <author>
-      <name>Rick Deckard</name>
-    </author>
-    <author>
-      <name>Roy Batty</name>
-    </author>
-    <author>
-      <name>Rachael</name>
-      <email>rachael@example.com</email>
-      <uri>https://example.com/~rachael</uri>
-    </author>
+    <id>http://www.zotero.org/styles/apa</id>
+    <title xml:lang="en">American Psychological Association 7th edition</title>
+    <title-short>APA</title-short>
   </info>
 </style>
-````
+```
 
-[csl-homepage]: https://citationstyles.org/
+[CSL]: https://citationstyles.org/

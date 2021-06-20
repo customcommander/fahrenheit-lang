@@ -3,7 +3,6 @@
 ## Syntax
 
 * [about](syntax/about.md)
-    * [title](syntax/title.md)
 
 ## FAQ
 

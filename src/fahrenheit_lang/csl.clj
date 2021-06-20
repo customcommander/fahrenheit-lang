@@ -1,172 +1,32 @@
 (ns fahrenheit-lang.csl
-  (:require
-   [clojure.data.xml :as xml]
-   [clojure.zip :as zip]
-   [clojure.set :as st]))
+  (:require [clojure.data.xml :as xml]
+            [clojure.core.match :as m]))
 
-; based on https://spdx.org/licenses/
-(def license-map
-  {:CC-BY-SA-3.0
-    {:uri "https://creativecommons.org/licenses/by-sa/3.0/"
-     :fullname "Creative Commons Attribution Share Alike 3.0 Unported"}})
+(defn localised-node [node-name ast]
+  (m/match [ast]
+    [[:str v]] [node-name v]
+    [[:strl [l v]]] [node-name {:xml:lang (name l)} v]))
 
-; default meta to csl code generator
-(defn meta->csl [loc]
-  (let [up (zip/up loc)
-        [key args] (zip/children up)
-        lang (st/rename-keys (dissoc args :value) {:lang :xml:lang})
-        content (:value args)]
-    (zip/right (zip/replace up
-                            [key lang content]))))
+(defmulti info
+  (fn [k v]
+    (when v k)))
 
-(defn meta-link->csl [loc]
-  (let [[kind args] (zip/node (zip/up loc))
-        new-args (assoc (st/rename-keys args {:value :href :lang :xml:lang})
-                        :rel
-                        (kind {:url "self"
-                               :documentation "documentation"
-                               :template "template"}))]
-    (-> loc
-        (zip/up)
-        (zip/replace [:link new-args]))))
+(defmethod info :id [_ v]
+  [:id v])
 
-(defmulti ->csl zip/node)
+(defmethod info :title [_ ast]
+  (localised-node :title ast))
 
-(defmethod ->csl :default [loc] loc)
+(defmethod info :title-short [_ ast]
+  (localised-node :title-short ast))
 
-(defmethod ->csl :program [loc]
-  (zip/replace loc :style))
+(defmethod info :default [_ _] nil)
 
-(defmethod ->csl :macros [loc]
-  (let [siblings (zip/rights loc)]
-    (loop [new-loc (-> loc zip/up zip/remove zip/next)
-           macros siblings]
-      (if (empty? macros)
-        new-loc
-        (recur (zip/left (zip/insert-left new-loc (first macros)))
-               (rest macros))))))
-
-(defmethod ->csl :macro [loc]
-  (-> loc
-      (zip/next)
-      (zip/edit #(assoc {} :name %))))
-
-(defmethod ->csl :metadata [loc]
-  (zip/replace loc :info))
-
-(defmethod ->csl :title [loc] (meta->csl loc))
-(defmethod ->csl :title-short [loc] (meta->csl loc))
-(defmethod ->csl :id [loc] (meta->csl loc))
-(defmethod ->csl :url [loc] (meta-link->csl loc))
-(defmethod ->csl :documentation [loc] (meta-link->csl loc))
-(defmethod ->csl :template [loc] (meta-link->csl loc))
-(defmethod ->csl :issn [loc] (meta->csl loc))
-(defmethod ->csl :eissn [loc] (meta->csl loc))
-(defmethod ->csl :issnl [loc] (meta->csl loc))
-(defmethod ->csl :summary [loc] (meta->csl loc))
-(defmethod ->csl :published [loc] (meta->csl loc))
-(defmethod ->csl :updated [loc] (meta->csl loc))
-
-(defmethod ->csl :citation-format [loc]
-  (-> loc
-      (zip/replace :category)
-      (zip/next)
-      (zip/edit #(st/rename-keys % {:value :citation-format}))))
-
-(defmethod ->csl :field [loc]
-  (-> loc
-      (zip/replace :category)
-      (zip/next)
-      (zip/edit #(st/rename-keys % {:value :field}))))
-
-(defmethod ->csl :license [loc]
-  (let [args (zip/node (zip/next loc))
-        lang (:lang args)
-        id (keyword (:value args))
-        license (id license-map)]
-    (-> loc
-        (zip/up)
-        (zip/replace [:rights
-                        (cond
-                          (and lang license) {:license (:uri license) :xml:lang lang}
-                          (some license)     {:license (:uri license)}
-                          (some lang)        {:xml:lang lang}
-                          :else              {})
-                        (if license
-                          (:fullname license)
-                          (:value args))]))))
-
-(defmethod ->csl :person [loc]
-  (let [args (zip/node (zip/next loc))]
-    (-> loc
-        (zip/up)
-        (zip/replace [(:kind args)
-                        [:name (:name args)]
-                        (when-let [email (:email args)]
-                          [:email email])
-                        (when-let [url (:url args)]
-                          [:uri url])])
-        (zip/next))))
-
-(defmethod ->csl :foreach-cite [loc]
-  (zip/replace loc :layout))
-
-(defmethod ->csl :print-text [loc]
-  (let [args (zip/node (zip/next loc))]
-    (-> loc
-        (zip/replace :text))))
-
-(defmethod ->csl :print-num [loc]
-  (let [args (zip/node (zip/next loc))]
-    (-> loc
-        (zip/replace :number))))
-
-(defmethod ->csl :print-date [loc]
-  (let [args (zip/node (zip/next loc))
-        key-map {:part   :name
-                 :format :form}
-
-        form-map {:n "numeric"}
-
-        name-map {:year  "year"
-                  :month "month"
-                  :day   "day"}]
-
-    (letfn [(date-args [m]
-              (dissoc m :date-format))
-
-            (date-part-args [m]
-              (as-> m new-m
-                (st/rename-keys new-m key-map)
-                (assoc new-m :form ((:form new-m) form-map)
-                             :name ((:name new-m) name-map))))
-
-            (date-part [m]
-              [:date-part (date-part-args m)])]
-      (-> loc
-          (zip/up)
-          (zip/replace `[:date ~(date-args args)
-                          ~@(map date-part (:date-format args))])))))
-
-(defmethod ->csl :print-term [loc]
-  (let [args (zip/node (zip/next loc))]
-    (-> loc
-        (zip/replace :text)
-        (zip/next)
-        (zip/edit #(st/rename-keys % {:variable :term})))))
-
-(defmethod ->csl :print-macro [loc]
-  (let [args (zip/node (zip/next loc))]
-    (-> loc
-        (zip/replace :text)
-        (zip/next)
-        (zip/edit #(st/rename-keys % {:variable :macro})))))
-
-(defn gen-code [ast]
-  (loop [loc (zip/vector-zip ast)]
-    (if (zip/end? loc)
-      (-> loc
-          zip/root
-          xml/sexp-as-element
-          xml/indent-str)
-      (recur (->csl (zip/next loc))))))
+(defn gen-code [style]
+  (xml/indent-str
+    (xml/sexp-as-element
+      [:style {:version "1.0"}
+        (let [about (:about style)]
+          [:info (info :id (:id about))
+                 (info :title (:title about))
+                 (info :title-short (:title-short about))])])))
