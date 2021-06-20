@@ -1,7 +1,16 @@
-An `about` block is used to provide information about your citation and bibliographic style:
+The `about` map provides information about your citation and bibliographic style:
 
+```clojure
+{:about
+  {:id "https://example.com/styles/foo"
+   :title "foo"     ; can be localised
+   :title-short "f" ; can be localised
+   }}
 ```
-about {
-  title "This is my style"
-}
-```
+
+The following properties are required:
+
+- `:id`
+- `:title`
+
+When a property can be localised its value can have two forms e.g. `"foo"` (non-localised form) or `[:en "foo"]` (localised form).
