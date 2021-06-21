@@ -13,3 +13,19 @@
 
     (test/is (= (run [:en "foo"])
                 [:title {:xml:lang "en"} "foo"]))))
+
+(test/deftest about-authors
+  (letfn [(run [input]
+            (sut/info :authors (s/conform ::t/authors input)))]
+
+    (test/is (= (run ["jane" {:name "joe" :email "joe@example.com"}])
+                [[:author [:name "jane"]]
+                 [:author [:name "joe"] [:email "joe@example.com"]]]))))
+
+(test/deftest about-contributors
+  (letfn [(run [input]
+            (sut/info :contributors (s/conform ::t/contributors input)))]
+
+    (test/is (= (run ["jane" {:name "joe" :email "joe@example.com"}])
+                [[:contributor [:name "jane"]]
+                 [:contributor [:name "joe"] [:email "joe@example.com"]]]))))
