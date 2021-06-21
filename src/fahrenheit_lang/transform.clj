@@ -11,8 +11,19 @@
 (s/def ::title ::str-localised)
 (s/def ::title-short ::str-localised)
 
+(s/def ::name ::str)
+(s/def ::email ::str)
+(s/def ::uri ::str)
+
+(s/def ::person (s/or :str ::name
+                      :map (s/keys :req-un [::name]
+                                   :opt-un [::email ::uri])))
+
+(s/def ::authors (s/coll-of ::person))
+(s/def ::contributors (s/coll-of ::person))
+
 (s/def ::about (s/keys :req-un [::id ::title]
-                       :opt-un [::title-short]))
+                       :opt-un [::title-short ::authors ::contributors]))
 
 (s/def ::style (s/keys :req-un [::about]))
 
