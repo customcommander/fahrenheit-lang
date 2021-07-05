@@ -140,16 +140,17 @@
 (derive :term/ordinal-55                 :print/term)   (derive :var/year-suffix                 :print/var)
 (derive :term/ordinal-56                 :print/term)
 
-(s/def ::print (s/cat :cmd #{:print}
-                      :opts (s/? map?)
-                      :body (s/alt :str string?
-                                   :var #(isa? % :print/var)
-                                   :num #(isa? % :print/number)
-                                   :date #(isa? % :print/date)
-                                   :name (s/+ #(isa? % :print/name)) ; TODO: must accept sub commands as substitutes
-                                   :term #(isa? % :print/term)
-                                   :label #(isa? % :print/label)
-                                   :sym symbol?)))
+(s/def ::print
+  (s/cat :cmd #{:print}
+         :opts (s/? map?)
+         :body (s/alt :str string?
+                      :var #(isa? % :print/var)
+                      :num #(isa? % :print/number)
+                      :date #(isa? % :print/date)
+                      :name (s/+ #(isa? % :print/name)) ; TODO: must accept sub commands as substitutes
+                      :term #(isa? % :print/term)
+                      :label #(isa? % :print/label)
+                      :sym symbol?)))
 
 (defmulti print->csl #(-> % :body first))
 
