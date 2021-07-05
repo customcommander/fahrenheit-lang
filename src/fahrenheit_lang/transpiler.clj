@@ -1,3 +1,5 @@
+;;; Copyright (c) 2021 Julien Gonzalez <hello@spinjs.com>
+
 (ns fahrenheit-lang.transpiler
   (:require [clojure.spec.alpha :as s]
             [clojure.core.match :as m]
