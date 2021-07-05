@@ -3,3 +3,5 @@
 .nrepl-port
 target/
 test.fahr
+*.ignore.csl
+*.ignore.edn
