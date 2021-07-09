@@ -142,9 +142,41 @@
 (derive :term/ordinal-55                 :print/term)   (derive :var/year-suffix                 :print/var)
 (derive :term/ordinal-56                 :print/term)
 
+(def flag->csl
+  {:case/lower            [:text-case       "lowercase"       ]
+   :case/upper            [:text-case       "uppercase"       ]
+   :case/sentence         [:text-case       "sentence"        ]
+   :case/capitalize-first [:text-case       "capitalize-first"]
+   :case/capitalize-all   [:text-case       "capitalize-all"  ]
+   :case/title            [:text-case       "title"           ]
+   :format/italic         [:font-style      "italic"          ]
+   :format/oblique        [:font-style      "oblique"         ]
+   :format/small-caps     [:font-variant    "small-caps"      ]
+   :format/bold           [:font-weight     "bold"            ]
+   :format/light          [:font-weight     "light"           ]
+   :format/underline      [:text-decoration "underline"       ]
+   :format/sup            [:vertical-align  "superscript"     ]
+   :format/sub            [:vertical-align  "subscript"       ]
+   :display/block         [:display         "block"           ]
+   :display/left          [:display         "left-margin"     ]
+   :display/right         [:display         "right-inline"    ]
+   :display/indent        [:display         "indent"          ]})
+
+(s/def ::str-or-na
+  (s/or :n-a #{'_}
+        :str string?))
+
+;; e.g. [_ "(" ")" :format/bold :case/upper]
+;;      [:format/italic :display/indent :case/sentence]
+(s/def ::format
+  (s/cat :delim-affixes (s/* ::str-or-na)
+         :flags (s/* keyword?)))
+
+(s/def ::opts (s/keys :opt-un [::format]))
+
 (s/def ::print
   (s/cat :cmd #{:print}
-         :opts (s/? map?)
+         :opts (s/? ::opts)
          :body (s/alt :str string?
                       :var #(isa? % :print/var)
                       :num #(isa? % :print/number)
@@ -154,36 +186,61 @@
                       :label #(isa? % :print/label)
                       :sym symbol?)))
 
+(defn format->csl
+  [{da :delim-affixes fl :flags}]
+  (merge (when da
+           (let [[d p s] da]
+             (letfn [(extract
+                       [[k v]]
+                       (when-not (= k :n-a) v))]
+               (merge (when-let [v (extract d)]
+                        {:delimiter v})
+                      (when-let [v (extract p)]
+                        {:prefix v})
+                      (when-let [v (extract s)]
+                        {:suffix v})))))
+         (when fl
+           (let [m (into {} (map flag->csl fl))]
+             (when-not (empty? m) m)))))
+
 (defmulti print->csl #(-> % :body first))
 
 (defmethod print->csl :str
-  [{[_ s] :body}]
-  [:text {:value s}])
+  [{o :opts [_ s] :body}]
+  [:text (merge {:value s}
+                (format->csl (:format o)))])
 
 (defmethod print->csl :var
-  [{[_ qkw] :body}]
-  [:text {:variable (name qkw)}])
+  [{o :opts [_ qkw] :body}]
+  [:text (merge {:variable (name qkw)}
+                (format->csl (:format o)))])
 
 (defmethod print->csl :num
-  [{[_ qkw] :body}]
-  [:number {:variable (name qkw)}])
+  [{o :opts [_ qkw] :body}]
+  [:number (merge {:variable (name qkw)}
+                  (format->csl (:format o)))])
 
 (defmethod print->csl :date
-  [{[_ qkw] :body}]
-  [:date {:variable (name qkw)}])
+  [{o :opts [_ qkw] :body}]
+  [:date (merge {:variable (name qkw)}
+                (format->csl (:format o)))])
 
 (defmethod print->csl :name
-  [{[_ qkws] :body}]
-  [:names {:variable (join " " (map name qkws))}])
+  [{o :opts [_ qkws] :body}]
+  [:names (merge {:variable (join " " (map name qkws))}
+                 (format->csl (:format o)))])
 
 (defmethod print->csl :term
-  [{[_ qkw] :body}]
-  [:text {:term (name qkw)}])
+  [{o :opts [_ qkw] :body}]
+  [:text (merge {:term (name qkw)}
+                (format->csl (:format o)))])
 
 (defmethod print->csl :label
-  [{[_ qkw] :body}]
-  [:label {:variable (name qkw)}])
+  [{o :opts [_ qkw] :body}]
+  [:label (merge {:variable (name qkw)}
+                 (format->csl (:format o)))])
 
 (defmethod print->csl :sym
-  [{[_ sym] :body}]
-  [:text {:macro (name sym)}])
+  [{o :opts [_ sym] :body}]
+  [:text (merge {:macro (name sym)}
+                (format->csl (:format o)))])
