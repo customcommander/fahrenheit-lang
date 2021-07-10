@@ -7,44 +7,52 @@
   (letfn [(print->csl [input]
             (sut/print->csl (s/conform ::sut/print input)))]
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} "foo"])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} "foo"])
              [:text {:value "foo"
-                     :delimiter ","
+                     :prefix "("
+                     :suffix ")"
                      :text-case "uppercase"}]))
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} :var/title])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} :var/title])
              [:text {:variable "title"
-                     :delimiter ","
+                     :prefix "("
+                     :suffix ")"
                      :text-case "uppercase"}]))
              
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} :var/volume])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} :var/volume])
              [:number {:variable "volume"
-                       :delimiter ","
+                       :prefix "("
+                       :suffix ")"
                        :text-case "uppercase"}]))
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} :var/issued])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} :var/issued])
              [:date {:variable "issued"
-                     :delimiter ","
+                     :prefix "("
+                     :suffix ")"
                      :text-case "uppercase"}]))
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} :var/author :var/editor])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} :var/author :var/editor])
              [:names {:variable "author editor"
-                      :delimiter ","
+                      :prefix "("
+                      :suffix ")"
                       :text-case "uppercase"}]))
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} :term/no-date])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} :term/no-date])
              [:text {:term "no-date"
-                     :delimiter ","
+                     :prefix "("
+                     :suffix ")"
                      :text-case "uppercase"}]))
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} :label/page])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} :label/page])
              [:label {:variable "page"
-                      :delimiter ","
+                      :prefix "("
+                      :suffix ")"
                       :text-case "uppercase"}]))
 
-    (t/is (= (print->csl [:print {:format ["," :case/upper]} 'my-macro])
+    (t/is (= (print->csl [:print {:format ["(" ")" :case/upper]} 'my-macro])
              [:text {:macro "my-macro"
-                     :delimiter ","
+                     :prefix "("
+                     :suffix ")"
                      :text-case "uppercase"}]))
 
     ;; make sure options remain optional
@@ -64,30 +72,15 @@
             (sut/format->csl (s/conform ::sut/format fmt)))]
 
     (t/are [fmt csl-attrs] (= csl-attrs (format->csl fmt))
-           []
-             nil
-
-           [","]
-             {:delimiter ","}
-
-           ['_ "(" ")"]
-             {:prefix "("
-              :suffix ")"}
-
-           ['_ '_ ")"]
-             {:suffix ")"}
-
-           ["," "(" ")"]
-             {:delimiter ","
-              :prefix "("
-              :suffix ")"}
-
-           ['_ '_ '_]
-             nil
-
-           [","
-            "("
+           [] nil
+           ["("] {:prefix "("}
+           ["(" ")"] {:prefix "(" :suffix ")"}
+           ['_ '_ ","] {:delimiter ","}
+           ["(" ")" ","] {:prefix "(" :suffix ")" :delimiter ","}
+           ['_ '_ '_] nil
+           ["("
             ")"
+            ","
             :case/upper
             :format/italic
             :display/block]

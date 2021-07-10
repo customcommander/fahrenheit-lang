@@ -189,7 +189,7 @@
 (defn format->csl
   [{da :delim-affixes fl :flags}]
   (merge (when da
-           (let [[d p s] da]
+           (let [[p s d] da]
              (letfn [(extract
                        [[k v]]
                        (when-not (= k :n-a) v))]
